@@ -1,12 +1,15 @@
 companies:
-  # ── Workday CXS (9 companies) ──────────────────────────
+  # ── Workday CXS (7 companies, verified live 2026-07-24) ─
+  # detail_endpoint is the bare ".../wday/cxs/{tenant}/{site}" base —
+  # externalPath from the listing response already starts with "/job/...",
+  # so the scraper appends it directly. Do not add a trailing "/job" here.
   - name: "Booz Allen Hamilton"
     ats: workday
     tenant: bah
     server: wd1
     site: BAH_Jobs
     endpoint: "https://bah.wd1.myworkdayjobs.com/wday/cxs/bah/BAH_Jobs/jobs"
-    detail_endpoint: "https://bah.wd1.myworkdayjobs.com/wday/cxs/bah/BAH_Jobs/job"
+    detail_endpoint: "https://bah.wd1.myworkdayjobs.com/wday/cxs/bah/BAH_Jobs"
     career_url: "https://bah.wd1.myworkdayjobs.com/BAH_Jobs"
     priority: 1
 
@@ -16,7 +19,7 @@ companies:
     server: wd5
     site: External
     endpoint: "https://leidos.wd5.myworkdayjobs.com/wday/cxs/leidos/External/jobs"
-    detail_endpoint: "https://leidos.wd5.myworkdayjobs.com/wday/cxs/leidos/External/job"
+    detail_endpoint: "https://leidos.wd5.myworkdayjobs.com/wday/cxs/leidos/External"
     career_url: "https://leidos.wd5.myworkdayjobs.com/External"
     priority: 1
 
@@ -26,7 +29,7 @@ companies:
     server: wd5
     site: External_Career_Site
     endpoint: "https://gdit.wd5.myworkdayjobs.com/wday/cxs/gdit/External_Career_Site/jobs"
-    detail_endpoint: "https://gdit.wd5.myworkdayjobs.com/wday/cxs/gdit/External_Career_Site/job"
+    detail_endpoint: "https://gdit.wd5.myworkdayjobs.com/wday/cxs/gdit/External_Career_Site"
     career_url: "https://gdit.wd5.myworkdayjobs.com/External_Career_Site"
     priority: 1
 
@@ -36,7 +39,7 @@ companies:
     server: wd1
     site: Northrop_Grumman_External_Site
     endpoint: "https://ngc.wd1.myworkdayjobs.com/wday/cxs/ngc/Northrop_Grumman_External_Site/jobs"
-    detail_endpoint: "https://ngc.wd1.myworkdayjobs.com/wday/cxs/ngc/Northrop_Grumman_External_Site/job"
+    detail_endpoint: "https://ngc.wd1.myworkdayjobs.com/wday/cxs/ngc/Northrop_Grumman_External_Site"
     career_url: "https://ngc.wd1.myworkdayjobs.com/Northrop_Grumman_External_Site"
     priority: 1
 
@@ -46,7 +49,7 @@ companies:
     server: wd5
     site: REC_RTX_Ext_Gateway
     endpoint: "https://globalhr.wd5.myworkdayjobs.com/wday/cxs/globalhr/REC_RTX_Ext_Gateway/jobs"
-    detail_endpoint: "https://globalhr.wd5.myworkdayjobs.com/wday/cxs/globalhr/REC_RTX_Ext_Gateway/job"
+    detail_endpoint: "https://globalhr.wd5.myworkdayjobs.com/wday/cxs/globalhr/REC_RTX_Ext_Gateway"
     career_url: "https://globalhr.wd5.myworkdayjobs.com/REC_RTX_Ext_Gateway"
     priority: 1
 
@@ -56,19 +59,9 @@ companies:
     server: wd1
     site: External
     endpoint: "https://caci.wd1.myworkdayjobs.com/wday/cxs/caci/External/jobs"
-    detail_endpoint: "https://caci.wd1.myworkdayjobs.com/wday/cxs/caci/External/job"
+    detail_endpoint: "https://caci.wd1.myworkdayjobs.com/wday/cxs/caci/External"
     career_url: "https://caci.wd1.myworkdayjobs.com/External"
     priority: 1
-
-  - name: "MITRE"
-    ats: workday
-    tenant: mitre
-    server: wd5
-    site: MITRE
-    endpoint: "https://mitre.wd5.myworkdayjobs.com/wday/cxs/mitre/MITRE/jobs"
-    detail_endpoint: "https://mitre.wd5.myworkdayjobs.com/wday/cxs/mitre/MITRE/job"
-    career_url: "https://mitre.wd5.myworkdayjobs.com/MITRE"
-    priority: 1  # Highest personal priority
 
   - name: "KBR"
     ats: workday
@@ -76,20 +69,24 @@ companies:
     server: wd5
     site: KBR_Careers
     endpoint: "https://kbr.wd5.myworkdayjobs.com/wday/cxs/kbr/KBR_Careers/jobs"
-    detail_endpoint: "https://kbr.wd5.myworkdayjobs.com/wday/cxs/kbr/KBR_Careers/job"
+    detail_endpoint: "https://kbr.wd5.myworkdayjobs.com/wday/cxs/kbr/KBR_Careers"
     career_url: "https://kbr.wd5.myworkdayjobs.com/KBR_Careers"
     priority: 1
 
   - name: "Amentum"
     ats: workday
-    tenant: amentum  # Verify exact tenant
-    server: wd5      # Verify exact server
-    site: External   # Verify exact site
-    endpoint: "https://amentum.wd5.myworkdayjobs.com/wday/cxs/amentum/External/jobs"
-    detail_endpoint: "https://amentum.wd5.myworkdayjobs.com/wday/cxs/amentum/External/job"
-    career_url: "https://amentumcareers.com"
+    tenant: pae               # Amentum acquired PAE; the Workday tenant is still registered as "pae"
+    server: wd1
+    site: Amentum_Careers
+    endpoint: "https://pae.wd1.myworkdayjobs.com/wday/cxs/pae/Amentum_Careers/jobs"
+    detail_endpoint: "https://pae.wd1.myworkdayjobs.com/wday/cxs/pae/Amentum_Careers"
+    career_url: "https://pae.wd1.myworkdayjobs.com/Amentum_Careers"
     priority: 2
-    notes: "Dual ATS (Workday + Taleo). Job IDs starting with 'R' = Workday."
+    notes: >
+      Confirmed live 2026-07-24 (2,651 jobs). Original tenant/server/site
+      guess (amentum/wd5/External) returned 422 — corrected above.
+      Amentum also runs a legacy Taleo board for employees with Taleo
+      records; the Workday board above is the primary external-facing site.
 
   # ── SmartRecruiters (1 company) ────────────────────────
   - name: "Accenture Federal Services"
@@ -98,3 +95,23 @@ companies:
     career_url: "https://careers.smartrecruiters.com/AccentureFederalServices"
     priority: 1
     notes: "Also check accenture.com/us-en/careers for broader listings."
+
+  # ── Phenom People (SPA — needs Playwright, deferred to Phase 2) ─
+  - name: "MITRE"
+    ats: phenom
+    career_url: "https://careers.mitre.org"
+    search_url: "https://careers.mitre.org/us/en/search-results"
+    dejobs_url: "https://mitre.dejobs.org/jobs/"   # DirectEmployers feed, possible interim source
+    priority: 1                                     # highest personal priority once scraper exists
+    phase: 2
+    notes: >
+      Migrated off Workday to Phenom People. The Workday tenant
+      (mitre.wd5.myworkdayjobs.com/MITRE) still resolves but returns 0
+      postings. careers.mitre.org is a JS SPA (cdn.phenompeople.com,
+      data-ph-* templates) — plain HTTP GETs return unrendered template
+      variables, and the Phenom API needs a browser session, so this
+      requires a Playwright-based scraper. Confirmed 218 jobs live via
+      rendered page: Data Science and Analytics (6), Operations Research
+      (4), Artificial Intelligence (20), Computer Science (5). Clearance
+      facet: None (81), Secret (57), Top Secret (27), TS/SCI (15),
+      TS/SCI/Polygraph (34) — 81 jobs need no clearance at all.

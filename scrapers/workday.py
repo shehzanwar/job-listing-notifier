@@ -1,9 +1,17 @@
 import httpx
 import time
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+
+def strip_html(html_text: str) -> str:
+    """Workday's jobDescription field is raw HTML — plain text is what the LLM needs."""
+    if not html_text:
+        return ""
+    return BeautifulSoup(html_text, "html.parser").get_text(separator="\n", strip=True)
 
 
 @dataclass
@@ -17,6 +25,7 @@ class JobListing:
     description: str = ""
     department: str = ""
     raw_json: dict = None
+    external_path: str = field(default="", repr=False)  # internal use only, not persisted
 
 
 class WorkdayScraper:
@@ -55,8 +64,15 @@ class WorkdayScraper:
         return response.json()
 
     def fetch_job_detail(self, company: dict, external_path: str) -> dict:
-        """Fetch full job description (second API call)."""
-        url = f"{company['detail_endpoint']}/{external_path}"
+        """Fetch full job description (second API call).
+
+        `external_path` comes straight from the listing response's
+        `externalPath` field and already starts with "/job/..." — do not
+        prepend another "/job" segment or you'll get a 404.
+        `detail_endpoint` must therefore be the bare
+        ".../wday/cxs/{tenant}/{site}" base, with no trailing "/job".
+        """
+        url = f"{company['detail_endpoint']}{external_path}"
         referer = company["career_url"]
 
         self.client.headers["Referer"] = referer
@@ -89,16 +105,24 @@ class WorkdayScraper:
                 total = data.get("total", 0)
 
                 for posting in postings:
-                    req_id = posting.get("externalPath", "").split("/")[-1]
+                    external_path = posting.get("externalPath", "")
+                    # bulletFields[0] is the clean req ID (e.g. "R0241239") and
+                    # matches jobReqId in the detail response. externalPath's
+                    # trailing segment is a title slug + req ID, not reliable
+                    # to parse on its own.
+                    bullet_fields = posting.get("bulletFields") or []
+                    req_id = bullet_fields[0] if bullet_fields else external_path.split("/")[-1]
+
                     if req_id and req_id not in all_jobs:
                         all_jobs[req_id] = JobListing(
                             title=posting.get("title", ""),
                             company=company["name"],
                             location=posting.get("locationsText", ""),
-                            url=f"{company['career_url']}/job/{posting['externalPath']}",
+                            url=f"{company['career_url']}{external_path}",
                             req_id=req_id,
                             posted_date=posting.get("postedOn", ""),
                             raw_json=posting,
+                            external_path=external_path,
                         )
 
                 offset += limit
@@ -111,11 +135,17 @@ class WorkdayScraper:
         jobs = list(all_jobs.values())
         for job in jobs:
             try:
-                detail = self.fetch_job_detail(company, job.req_id)
-                job.description = detail.get("jobPostingInfo", {}).get(
-                    "jobDescription", "")
-                job.department = detail.get("jobPostingInfo", {}).get(
-                    "department", "")
+                detail = self.fetch_job_detail(company, job.external_path)
+                info = detail.get("jobPostingInfo", {})
+                job.description = strip_html(info.get("jobDescription", ""))
+                # startDate is absolute ("2026-07-23"); postedOn from the
+                # listing response is relative ("Posted 2 Days Ago") and
+                # useless for date-based filtering.
+                job.posted_date = info.get("startDate") or job.posted_date
+                # externalUrl is the canonical apply link; falls back to the
+                # URL built from the listing if the detail call is missing it.
+                job.url = info.get("externalUrl") or job.url
+                # Workday's detail payload has no "department" field.
                 time.sleep(self.delay)
             except Exception as e:
                 logger.warning(f"Failed to fetch detail for {job.req_id}: {e}")
