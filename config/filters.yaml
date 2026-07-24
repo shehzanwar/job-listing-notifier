@@ -1,0 +1,50 @@
+# ── Experience limits ────────────────────────────────────
+experience:
+  max_years_required: 4       # Hard reject if ≥5 years REQUIRED
+  flag_years_preferred: 3     # Flag if ≥3 years PREFERRED
+  # "Preferred" is softer than "required" — flag, don't reject
+
+# ── Clearance policy ────────────────────────────────────
+clearance:
+  us_citizen: true
+  has_active_clearance: false
+
+  rules:
+    none:           { action: "PASS" }
+    public_trust:   { action: "PASS", note: "Background check only" }
+    mbi:            { action: "PASS", note: "Moderate background investigation" }
+    secret:
+      active_required: { action: "REJECT", note: "Requires existing Secret" }
+      sponsorable:     { action: "FLAG", note: "Secret often sponsorable for new grads" }
+    top_secret:
+      active_required: { action: "REJECT", note: "Requires existing TS" }
+      sponsorable:     { action: "FLAG", note: "TS sponsorship possible, 6-12 month process" }
+    ts_sci:
+      active_required: { action: "REJECT", note: "Requires existing TS/SCI" }
+      sponsorable:     { action: "FLAG", note: "TS/SCI sponsorship varies by company" }
+
+# ── Education gates ─────────────────────────────────────
+education:
+  phd_required: "REJECT"
+  # BS/MS in any STEM field: PASS (your MS Analytics qualifies)
+  # ABET-specific requirements: FLAG
+
+# ── Other hard rejects ──────────────────────────────────
+hard_rejects:
+  - "contingent upon contract award"   # FLAG, not reject
+  - "1099"                             # Contract, not FTE
+  - "w2 contract"                      # Contract, not FTE
+  # Travel > 50%: FLAG
+
+# ── Location preferences (optional) ─────────────────────
+location:
+  preferred:
+    - "remote"
+    - "hybrid"
+    - "Virginia"
+    - "Maryland"
+    - "DC"
+    - "Colorado"
+    - "Georgia"
+  # Don't hard-reject other locations — just flag
+  flag_if_not_in_preferred: true

@@ -1,0 +1,47 @@
+# ── Scheduling ───────────────────────────────────────────
+scraper:
+  schedule: "0 */4 * * *"    # Every 4 hours
+  request_delay: 1.5         # Seconds between HTTP requests
+  max_retries: 3
+  timeout: 30                # Seconds per request
+
+llm:
+  schedule_primary: "0 7 * * *"     # 7:00 AM daily
+  schedule_secondary: "0 18 * * *"  # 6:00 PM daily
+  model_path: "models/qwen3.5-9b-ud-q6_k_xl.gguf"
+  server_host: "127.0.0.1"
+  server_port: 8080
+  temperature: 0.1
+  top_p: 0.9
+  max_tokens: 400
+  context_size: 4096
+  gpu_layers: 99
+  threads: 8
+  flash_attn: true
+  thinking_mode_threshold: 65   # Fit score ≤65 → re-run with thinking
+  startup_wait: 15              # Seconds to wait for llama.cpp server
+
+# ── Discord ──────────────────────────────────────────────
+# Set the real webhook URL via the DISCORD_WEBHOOK_URL environment variable
+# instead of committing it here. Falls back to this value if the env var is unset.
+discord:
+  webhook_url: ""
+  batch_threshold: 5            # If >5 jobs, batch into one message
+  rate_limit_delay: 2           # Seconds between webhook calls
+
+# ── Database ─────────────────────────────────────────────
+database:
+  path: "jobs.db"
+  max_listing_age_days: 30      # Ignore listings older than this
+
+# ── Logging ──────────────────────────────────────────────
+logging:
+  level: "INFO"
+  file: "logs/notifier.log"
+  max_size_mb: 10
+  backup_count: 5
+
+# ── Health monitoring ───────────────────────────────────
+health:
+  max_consecutive_failures: 3   # Alert via Discord if scraper fails 3x
+  alert_on_failure: true

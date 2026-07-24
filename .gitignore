@@ -1,0 +1,7 @@
+jobs.db
+logs/
+models/*.gguf
+__pycache__/
+*.pyc
+.venv/
+venv/

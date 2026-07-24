@@ -1,0 +1,107 @@
+# ── Tier 1: Primary targets (highest match) ──────────────
+tier_1:
+  - "data analyst"
+  - "data scientist"
+  - "associate data scientist"
+  - "data scientist i"
+  - "analytics consultant"
+  - "business intelligence analyst"
+  - "decision analyst"
+  - "systems analyst"
+  - "operations analyst"
+  - "data & ai analyst"
+  - "analytics engineer"
+
+# ── Tier 2: Strong match (AI integration focus) ─────────
+tier_2:
+  - "ai solutions engineer"
+  - "applied ai engineer"
+  - "machine learning engineer"
+  - "ai integration engineer"
+  - "junior data scientist"
+  - "junior data analyst"
+
+# ── Tier 3: Differentiator roles (Monte Carlo / sim) ────
+tier_3:
+  - "operations research analyst"
+  - "modeling and simulation analyst"
+  - "mission analyst"
+  - "digital engineering analyst"
+  - "quantitative analyst"
+  - "research analyst"
+
+# ── Workday searchText queries (server-side pre-filter) ──
+workday_search_queries:
+  - "data analyst"
+  - "data scientist"
+  - "analytics"
+  - "business intelligence"
+  - "operations research"
+  - "machine learning"
+  - "ai engineer"
+  - "decision"
+  - "modeling simulation"
+  - "systems analyst"
+
+# ── Exclusion keywords (auto-reject in title) ───────────
+exclude_titles:
+  seniority:
+    - "senior"
+    - "sr."
+    - "sr "
+    - "principal"
+    - "staff"
+    - "lead"
+    - "director"
+    - "vp"
+    - "vice president"
+    - "chief"
+    - "head of"
+    - "architect"
+    - "fellow"
+    - "distinguished"
+    - "executive"
+    - "manager"       # Unless "associate" or "assistant" also present
+    - "supervisor"
+  unrelated_roles:
+    - "software engineer"
+    - "backend"
+    - "full-stack"
+    - "fullstack"
+    - "devops"
+    - "sre"
+    - "site reliability"
+    - "frontend"
+    - "front-end"
+    - "ios developer"
+    - "android developer"
+    - "embedded"
+    - "firmware"
+    - "hardware engineer"
+    - "rf engineer"
+    - "network engineer"
+    - "cybersecurity analyst"   # Unless data-focused
+    - "soc analyst"
+    - "penetration tester"
+    - "mechanical engineer"
+    - "electrical engineer"
+    - "civil engineer"
+    - "nurse"
+    - "attorney"
+    - "accountant"
+    - "hr "
+    - "human resources"
+    - "marketing"
+    - "sales"
+    - "recruiter"
+
+# ── Exception: allow these even if exclusion keyword present ──
+exclude_exceptions:
+  - "associate"      # "Associate Manager" might be OK
+  - "assistant"
+  - "junior"
+  - "entry level"
+  - "early career"
+  - "graduate"
+  - "intern"         # Include internships? Adjust as needed
+  - "new grad"
