@@ -8,7 +8,8 @@ scraper:
 llm:
   schedule_primary: "0 7 * * *"     # 7:00 AM daily
   schedule_secondary: "0 18 * * *"  # 6:00 PM daily
-  model_path: "models/qwen3.5-9b-ud-q6_k_xl.gguf"
+  llama_server_path: "C:/Users/couga/llama.cpp/llama-server.exe"
+  model_path: "C:/Users/couga/.ollama/models/Qwen3.5-9B-UD-Q6_K_XL.gguf"
   server_host: "127.0.0.1"
   server_port: 8080
   temperature: 0.1
@@ -18,8 +19,8 @@ llm:
   gpu_layers: 99
   threads: 8
   flash_attn: true
-  thinking_mode_threshold: 65   # Fit score ≤65 → re-run with thinking
-  startup_wait: 15              # Seconds to wait for llama.cpp server
+  thinking_max_tokens: 2500      # Thinking-mode reasoning needs much more room than the fast pass
+  startup_wait: 30               # Seconds to wait for llama.cpp server to load the model
 
 # ── Discord ──────────────────────────────────────────────
 # Set the real webhook URL via the DISCORD_WEBHOOK_URL environment variable

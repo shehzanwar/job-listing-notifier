@@ -5,3 +5,8 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+.llm_server.pid
+scratch_*.py
+scratch_*.csv
+scratch_*.txt
+RESUME.md

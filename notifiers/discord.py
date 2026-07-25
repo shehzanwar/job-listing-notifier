@@ -63,8 +63,14 @@ class DiscordNotifier:
         response.raise_for_status()
         time.sleep(self.delay)
 
+    # Discord hard-caps message content at 2000 chars; leave headroom for the
+    # header line and markdown escaping quirks rather than cutting it exactly.
+    MAX_MESSAGE_CHARS = 1800
+
     def send_batch_alert(self, jobs_with_results: list):
-        """Send multiple jobs in one message (for high-volume days)."""
+        """Send multiple jobs as one or more messages (chunked to stay under
+        Discord's 2000-char message limit -- bundling ~20+ listings into a
+        single message reliably exceeds it and Discord returns a 400)."""
         lines = []
         for job, result in jobs_with_results:
             verdict = result.get("verdict", "FLAG")
@@ -76,12 +82,21 @@ class DiscordNotifier:
                 f"[Apply]({job.url})"
             )
 
-        content = f"📋 **{len(jobs_with_results)} new listings found:**\n\n"
-        content += "\n".join(lines)
+        header = f"📋 **{len(jobs_with_results)} new listings found:**\n\n"
+        chunks = []
+        current = header
+        for line in lines:
+            if len(current) + len(line) + 1 > self.MAX_MESSAGE_CHARS:
+                chunks.append(current)
+                current = ""
+            current += line + "\n"
+        if current:
+            chunks.append(current)
 
-        payload = {"content": content}
-        response = httpx.post(self.webhook_url, json=payload)
-        response.raise_for_status()
+        for chunk in chunks:
+            response = httpx.post(self.webhook_url, json={"content": chunk})
+            response.raise_for_status()
+            time.sleep(self.delay)
 
     def send_error_alert(self, message: str):
         """Send an error/failure notification."""

@@ -62,6 +62,23 @@ python main_filter.py    # run the 3-layer filter + LLM judge, notify Discord
 python main_digest.py    # weekly LLM-summarized digest of PASS/FLAG listings
 ```
 
+### Task runner
+
+There's a `Makefile` with the common commands (`make scrape`, `make filter`,
+`make calibrate`, `make llm-server-start/status/stop`, etc. — run `make help`
+for the full list). **GNU Make isn't installed on Windows by default** and
+isn't a `pip install`-able thing (a PyPI package literally named `make`
+exists but is an unrelated project-scaffolding tool — don't install it).
+Get real Make via `choco install make`, `scoop install make`, or MSYS2/Git
+Bash, or use the pip-installable equivalent instead:
+
+```bash
+pip install invoke
+inv --list        # same targets as the Makefile, e.g. `inv scrape`, `inv calibrate`
+```
+
+`tasks.py` mirrors the Makefile 1:1.
+
 ### Scheduling (Windows Task Scheduler)
 
 | Task | Schedule | Command |

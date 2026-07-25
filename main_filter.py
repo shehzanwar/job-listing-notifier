@@ -31,21 +31,28 @@ def start_llama_server(settings):
     """Start llama.cpp server as a subprocess."""
     llm_cfg = settings["llm"]
     cmd = [
-        "llama-server",
+        llm_cfg.get("llama_server_path", "llama-server"),
         "-m", llm_cfg["model_path"],
         "--host", llm_cfg["server_host"],
         "--port", str(llm_cfg["server_port"]),
         "-ngl", str(llm_cfg["gpu_layers"]),
         "-c", str(llm_cfg["context_size"]),
-        "--flash-attn",
+        "--flash-attn", "on" if llm_cfg.get("flash_attn", True) else "off",
         "-t", str(llm_cfg["threads"]),
         "--temp", str(llm_cfg["temperature"]),
         "--top-p", str(llm_cfg["top_p"]),
     ]
 
     logger.info("Starting llama.cpp server...")
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+    # llama-server logs verbosely per request. subprocess.PIPE has a small
+    # OS buffer (~64KB on Windows) -- if nothing reads it, the buffer fills
+    # after a few dozen requests and the child process blocks on its next
+    # write() call, silently freezing generation (confirmed live: GPU usage
+    # dropped to ~7% and every request after that timed out identically).
+    # Redirect to a file instead so the child is never blocked on output.
+    Path("logs").mkdir(exist_ok=True)
+    log_file = open("logs/llm_server.log", "a")
+    process = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT)
 
     # Wait for server to be ready
     import httpx
